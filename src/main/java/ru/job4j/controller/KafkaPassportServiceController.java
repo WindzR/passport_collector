@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+import ru.job4j.model.Post;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,12 +18,10 @@ public class KafkaPassportServiceController {
 
     private final Map<String, Integer> statistic = new ConcurrentHashMap<>();
 
-    @KafkaListener(topics = {"passport_service"})
-    public void onApiCall(ConsumerRecord<Integer, String> input) {
-        String value = input.value();
-        statistic.put(value, statistic.getOrDefault(value, 0) + 1);
-        if (value.equals("PassportServiceAction")) {
-            template.send("passport_service-stats", statistic.toString());
-        }
+    @KafkaListener(topics = {"email"})
+    public void onApiCall(ConsumerRecord<Integer, Post> record) {
+        System.out.println(record.partition());
+        System.out.println(record.key());
+        System.out.println(record.value());
     }
 }
